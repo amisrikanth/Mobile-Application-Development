@@ -3,6 +3,14 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        debug {
+            storeFile file('/Users/srikanthbanagadi/Desktop/SBKeyStoreFile')
+            storePassword 'Password@123'
+            keyAlias 'key'
+            keyPassword 'Password@123'
+        }
+    }
     compileSdk 32
 
     defaultConfig {
