@@ -24,4 +24,9 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void onClickLinkCollector(View view) {
+        Intent intent = new Intent(this,MainActivity3.class);
+        startActivity(intent);
+    }
+
 }
