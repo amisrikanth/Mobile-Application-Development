@@ -101,18 +101,22 @@ public class MainActivity3 extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("New Link");
         // Set up the input
+        final View linkPopupView = getLayoutInflater().inflate(R.layout.dialog_link,null);
         final EditText input = new EditText(this);
+        EditText name = (EditText) linkPopupView.findViewById(R.id.name);
+        EditText link = (EditText) linkPopupView.findViewById(R.id.link);
         // Specify the type of input expected
         input.setInputType(InputType.TYPE_CLASS_TEXT);
-        builder.setView(input);
+        builder.setView(linkPopupView);
         // Set up the buttons
         builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String newUrl = input.getText().toString();
+                String newUrl = link.getText().toString();
+                String urlName = name.getText().toString();
                 String message = "";
                 if (Patterns.WEB_URL.matcher(newUrl).matches()) {
-                    linkList.add(position, new LinkCard(newUrl));
+                    linkList.add(position, new LinkCard(newUrl, urlName));
                     recyclerAdapter.notifyItemInserted(position);
                     message = "Successfully added a new link";
                 } else {

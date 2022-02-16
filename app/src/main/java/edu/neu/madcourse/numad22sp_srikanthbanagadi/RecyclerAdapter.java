@@ -22,14 +22,15 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerHolder>{
 
     @Override
     public RecyclerHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_link_collector, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_link_collector
+                , parent, false);
         return new RecyclerHolder(view, listener);
     }
 
     @Override
     public void onBindViewHolder(RecyclerHolder holder, int position) {
         LinkCard currentItem = list.get(position);
-        holder.url.setText(currentItem.getUrl());
+        holder.url.setText(currentItem.getUrlName());
     }
 
     @Override

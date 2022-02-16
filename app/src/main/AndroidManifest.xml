@@ -10,7 +10,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NUMAD22Sp_SrikanthBanagadi">
         <activity
+            android:name=".AboutMe"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity3"
+            android:configChanges="orientation|screenSize"
             android:exported="false" />
         <activity
             android:name=".MainActivity2"

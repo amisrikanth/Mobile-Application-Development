@@ -15,8 +15,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
     public void onClick(View view) {
-        Toast.makeText(MainActivity.this, "Srikanth Banagadi \n " +
-                "banagadi.s@northeastern.edu", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this,AboutMe.class);
+        startActivity(intent);
     }
 
     public void onClickClickyClicky(View view) {
