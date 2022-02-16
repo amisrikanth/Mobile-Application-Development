@@ -16,6 +16,7 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -115,18 +116,26 @@ public class MainActivity3 extends AppCompatActivity {
                 String newUrl = link.getText().toString();
                 String urlName = name.getText().toString();
                 String message = "";
-                if (Patterns.WEB_URL.matcher(newUrl).matches()) {
+                if (urlName.isEmpty()) {
+                    Toast.makeText(MainActivity3.this, "Name cannot be blank",
+                            Toast.LENGTH_SHORT).show();
+                }
+                else if (Patterns.WEB_URL.matcher(newUrl).matches()) {
                     linkList.add(position, new LinkCard(newUrl, urlName));
                     recyclerAdapter.notifyItemInserted(position);
                     message = "Successfully added a new link";
                 } else {
-                    message = "Invalid Url Format";
+                    Toast.makeText(MainActivity3.this, "Invalid Url Format",
+                            Toast.LENGTH_SHORT).show();
                 }
+                if(message != "")
+                {
                 Snackbar snack = Snackbar.make(view, message, Snackbar.LENGTH_LONG).setAction("Action", null);
                 View snackView = snack.getView();
                 TextView mTextView = snackView.findViewById(com.google.android.material.R.id.snackbar_text);
                 mTextView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
                 snack.show();
+                }
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
