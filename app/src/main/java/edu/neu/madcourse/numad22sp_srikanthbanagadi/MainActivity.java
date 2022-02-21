@@ -29,4 +29,10 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void onClickLocator(View view) {
+        Intent intent = new Intent(this,LocatorActivity.class);
+        startActivity(intent);
+    }
+
+
 }
