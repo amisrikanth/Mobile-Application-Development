@@ -12,7 +12,11 @@
         <entry key="app/src/main/res/layout/activity_main2.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_main3.xml" value="0.14427083333333332" />
         <entry key="app/src/main/res/layout/activity_main4.xml" value="0.16822916666666668" />
+        <entry key="app/src/main/res/layout/activity_service.xml" value="0.24166666666666667" />
+        <entry key="app/src/main/res/layout/content_service.xml" value="0.24166666666666667" />
         <entry key="app/src/main/res/layout/dialog_link.xml" value="0.4299937119516605" />
+        <entry key="app/src/main/res/layout/fragment_first.xml" value="0.24166666666666667" />
+        <entry key="app/src/main/res/layout/fragment_second.xml" value="0.24166666666666667" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.2484375" />
       </map>
     </option>

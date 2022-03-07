@@ -2,8 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="edu.neu.madcourse.numad22sp_srikanthbanagadi">
 
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_sb"
@@ -11,6 +13,11 @@
         android:roundIcon="@mipmap/ic_launcher_sb_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.NUMAD22Sp_SrikanthBanagadi">
+        <activity
+            android:name=".Service"
+            android:exported="false"
+            android:label="@string/title_activity_service"
+            android:theme="@style/Theme.NUMAD22Sp_SrikanthBanagadi.NoActionBar" />
         <activity
             android:name=".LocatorActivity"
             android:configChanges="orientation|screenSize"
