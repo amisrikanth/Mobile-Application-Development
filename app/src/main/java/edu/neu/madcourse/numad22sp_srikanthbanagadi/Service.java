@@ -1,183 +1,109 @@
 package edu.neu.madcourse.numad22sp_srikanthbanagadi;
-
-import static android.text.Html.fromHtml;
-
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.Html;
-import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
-import androidx.appcompat.app.AppCompatActivity;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 
-import com.google.android.material.snackbar.Snackbar;
-
-import org.jetbrains.annotations.NotNull;
-import org.json.JSONObject;
-
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Scanner;
+import java.util.ArrayList;
 
+import edu.neu.madcourse.numad22sp_srikanthbanagadi.databinding.ActivityServiceBinding;
 
 public class Service extends AppCompatActivity {
 
-    private final Handler textHandler = new Handler();
-    private TextView searchTitle;
-    private ScrollView movieDetailsView;
-    private TextView loading;
-    private TextView title;
-    private TextView year;
-    private TextView released;
-    private TextView runtime;
-    private TextView genre;
-    private TextView director;
-    private TextView writer;
-    private TextView language;
-    private TextView country;
-    private TextView plot;
-
+    ActivityServiceBinding binding;
+    ArrayList<String> universityList;
+    ArrayAdapter<String> universityAdapter;
+    Handler serviceHandler = new Handler();
+    ProgressDialog LoadDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_service);
-        title = findViewById(R.id.title);
-        year = findViewById(R.id.year);
-        released = findViewById(R.id.released);
-        runtime = findViewById(R.id.runtime);
-        genre = findViewById(R.id.genre);
-        director = findViewById(R.id.director);
-        writer = findViewById(R.id.writer);
-        language = findViewById(R.id.language);
-        country = findViewById(R.id.country);
-        loading = findViewById(R.id.loading);
-        searchTitle = findViewById(R.id.searchTitle);
-        movieDetailsView = findViewById(R.id.scrollView);
-        plot = findViewById(R.id.plot);
+        binding = ActivityServiceBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        setUp();
+        binding.button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new fetchData().start();
+            }
+
+        });
     }
 
-    @Override
-    public void onSaveInstanceState(@NotNull Bundle savedInstanceState) {
-        if (!title.getText().toString().isEmpty()) {
-            savedInstanceState.putString("title", title.getText().toString().split(":", 2)[1]);
-            savedInstanceState.putString("year", year.getText().toString().split(":", 2)[1]);
-            savedInstanceState.putString("released", released.getText().toString().split(":", 2)[1]);
-            savedInstanceState.putString("runtime", runtime.getText().toString().split(":", 2)[1]);
-            savedInstanceState.putString("genre", genre.getText().toString().split(":", 2)[1]);
-            savedInstanceState.putString("director", director.getText().toString().split(":", 2)[1]);
-            savedInstanceState.putString("writer", writer.getText().toString().split(":", 2)[1]);
-            savedInstanceState.putString("language", language.getText().toString().split(":", 2)[1]);
-            savedInstanceState.putString("country", country.getText().toString().split(":", 2)[1]);
-            savedInstanceState.putString("plot", plot.getText().toString().split(":", 2)[1]);
-        }
-        super.onSaveInstanceState(savedInstanceState);
+    private void setUp() {
+        universityList = new ArrayList<>();
+        universityAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, universityList);
+        binding.UniversityList.setAdapter(universityAdapter);
     }
 
-    @Override
-    public void onRestoreInstanceState(@NotNull Bundle savedInstanceState) {
-        if (savedInstanceState.get("title") != null) {
-            title.setText(fromHtml("<b>Title: </b>" + savedInstanceState.get("title").toString()));
-            year.setText(fromHtml("<b>Year: </b>" + savedInstanceState.get("year").toString()));
-            released.setText(fromHtml("<b>Released: </b>" + savedInstanceState.get("released").toString()));
-            runtime.setText(fromHtml("<b>Runtime: </b>" + savedInstanceState.get("runtime").toString()));
-            genre.setText(fromHtml("<b>Genre: </b>" + savedInstanceState.get("genre").toString()));
-            director.setText(fromHtml("<b>Director: </b>" + savedInstanceState.get("director").toString()));
-            writer.setText(fromHtml("<b>Writer: </b>" + savedInstanceState.get("writer").toString()));
-            language.setText(fromHtml("<b>Language: </b>" + savedInstanceState.get("language").toString()));
-            country.setText(fromHtml("<b>Country: </b>" + savedInstanceState.get("country").toString()));
-            plot.setText(fromHtml("<b>Plot: </b>" + savedInstanceState.get("plot").toString()));
-            movieDetailsView.setVisibility(View.VISIBLE);
-        }
-        super.onRestoreInstanceState(savedInstanceState);
-    }
-    public void onMovieSearchClick(View view) {
-        InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(view.getApplicationWindowToken(), 0);
-        loading.setText("Searching...");
-        loading.setVisibility(View.INVISIBLE);
-        movieDetailsView.setVisibility(View.INVISIBLE);
-        if (searchTitle.getText().toString().isEmpty()) {
-            resetData();
-            Snackbar snack = Snackbar.make(view, "Movie title required!", Snackbar.LENGTH_LONG).setAction("Action", null);
-            View snackView = snack.getView();
-            TextView mTextView = snackView.findViewById(com.google.android.material.R.id.snackbar_text);
-            mTextView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-            snack.show();
-            return;
-        }
-        loading.setVisibility(View.VISIBLE);
-        callWebService();
-    }
+    class fetchData extends Thread{
 
-    private void callWebService() {
-        WebServiceThread webServiceThread = new WebServiceThread();
-        new Thread(webServiceThread).start();
-    }
-    private void resetData() {
-        title.setText("");
-        year.setText("");
-        released.setText("");
-        runtime.setText("");
-        genre.setText("");
-        director.setText("");
-        writer.setText("");
-        language.setText("");
-        country.setText("");
-        plot.setText("");
-    }
-
-    class WebServiceThread implements Runnable {
+        String JsonData="";
         @Override
         public void run() {
-            try {
-                URL url = new URL("https://www.omdbapi.com/?i=tt3896198&apikey=4a5909bb&t=" + searchTitle.getText());
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("GET");
-                conn.setDoInput(true);
-                conn.connect();
-                InputStream inputStream = conn.getInputStream();
-                String response = convertStreamToString(inputStream);
-                JSONObject movieDetails = new JSONObject(response);
-                System.out.println(movieDetails);
-                textHandler.post(() -> {
-                    try {
-                        if (movieDetails.has("Error")) {
-                            resetData();
-                            loading.setText("Movie not found!");
-                        } else {
-                            title.setText(fromHtml("<b>Title: </b>" + movieDetails.get("Title").toString()));
-                            year.setText(fromHtml("<b>Year: </b>" + movieDetails.get("Year").toString()));
-                            released.setText(fromHtml("<b>Released: </b>" + movieDetails.get("Released").toString()));
-                            runtime.setText(fromHtml("<b>Runtime: </b>" + movieDetails.get("Runtime").toString()));
-                            genre.setText(fromHtml("<b>Genre: </b>" + movieDetails.get("Genre").toString().replace('\n', ' ')));
-                            director.setText(fromHtml("<b>Director: </b>" + movieDetails.get("Director").toString()));
-                            writer.setText(fromHtml("<b>Writer: </b>" + movieDetails.get("Writer").toString()));
-                            language.setText(fromHtml("<b>Language: </b>" + movieDetails.get("Language").toString()));
-                            country.setText(fromHtml("<b>Country: </b>" + movieDetails.get("Country").toString()));
-                            plot.setText(fromHtml("<b>Plot: </b>" + movieDetails.get("Plot").toString()));
-                            loading.setVisibility(View.INVISIBLE);
-                            movieDetailsView.setVisibility(View.VISIBLE);
-                        }
-                    } catch (Exception e) {
-                        System.out.println(e);
-                    }
-                });
-            } catch (Exception e) {
-                System.out.println(e);
-            }
-        }
+            serviceHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    LoadDialog = new ProgressDialog(Service.this);
+                    LoadDialog.setMessage("Fetching Data");
+                    LoadDialog.setCancelable(false);
+                    LoadDialog.show();
 
-        private String convertStreamToString(InputStream inputStream) {
-            Scanner s = new Scanner(inputStream).useDelimiter("\\A");
-            return s.hasNext() ? s.next().replace(",", ",\n") : "";
+                }
+            });
+            try {
+                EditText input = (EditText) findViewById(R.id.country);
+                universityList.clear();
+                URL url = new URL("http://universities.hipolabs.com/search?country=" + input.getText().toString());
+                HttpURLConnection httpURLConnection =(HttpURLConnection)  url.openConnection();
+
+                InputStream inputStream = httpURLConnection.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String jsonInput;
+                while ((jsonInput = bufferedReader.readLine()) != null){
+                    JsonData = JsonData + jsonInput;
+                }
+                if(!JsonData.isEmpty()){
+                    JSONArray Universities = new JSONArray(JsonData);
+                    for (int i = 0; i < Universities.length(); i++) {
+                        String name = Universities.getJSONObject(i).getString("name");
+                        universityList.add(name);
+                    }
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            } catch (JSONException ex) {
+                ex.printStackTrace();
+            }
+            serviceHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if(LoadDialog.isShowing()){
+                        LoadDialog.dismiss();
+                        universityAdapter.notifyDataSetChanged();
+                    }
+                }
+            });
+
         }
     }
+
 }
